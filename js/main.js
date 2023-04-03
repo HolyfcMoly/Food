@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ////  Modal
 
   const modalTriger = document.querySelectorAll("[data-modal]");
-  const modalClose = document.querySelector("[data-close]");
+  // const modalClose = document.querySelector("[data-close]");
   const modal = document.querySelector(".modal");
   //если делать через toggle то modal.classList.toggle('show')
   // в верстке добавить класс show => modal
@@ -144,12 +144,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "";
   }
 
-  modalClose.addEventListener("click", closeModal); // при нажатии на крестик окно закрывается
+  // modalClose.addEventListener("click", closeModal); // при нажатии на крестик окно закрывается
 
   // здесь клик вешается на окно, но сам контент с текстом и формой это не окно, и если кликать по контенту то ничего закрываться не будет
   modal.addEventListener("click", (e) => {
     // вешаем обработчик на окно
-    if (e.target === modal) {
+    if (e.target === modal || e.target.getAttribute('data-close') == '') {
       // проверка на то что клик был совершен именно в окне
       closeModal(); // закрываем окно
     }
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const modalTimerId = setTimeout(openModal, 5000)
+  const modalTimerId = setTimeout(openModal, 50000)
 
   function showModalByScroll() {
     if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -243,13 +243,12 @@ document.addEventListener("DOMContentLoaded", () => {
     '.menu .container',
   ).render()
 
+  // Forms 
 
-// Forms 
-
-const forms = document.querySelectorAll('form')
+  const forms = document.querySelectorAll('form')
 
   const message = {
-    loading: 'Загрузка',
+    loading: 'img/spinner.svg',
     success: 'Спасибо! Скоро мы с вами свяжемся',
     failed: 'Что то пошло не так...'
   }
@@ -262,10 +261,13 @@ const forms = document.querySelectorAll('form')
     form.addEventListener('submit', (e) => {
       e.preventDefault()
 
-      const statusMessage = document.createElement('div')
-      statusMessage.classList.add('status')
-      statusMessage.textContent = message.loading;
-      form.append(statusMessage)
+      let statusMessage = document.createElement('img')
+      statusMessage.src = message.loading
+      statusMessage.style.cssText = `
+      display: block;
+      margin: 0 auto;
+      `;
+      form.insertAdjacentElement('afterend', statusMessage)
 
       const request = new XMLHttpRequest()
       request.open('POST', 'server.php')
@@ -287,16 +289,45 @@ const forms = document.querySelectorAll('form')
 
       request.addEventListener('load', () => {
         if(request.status === 200) {
+          // console.log(request.response)
+          // statusMessage.textContent = message.success;
+          // form.reset()  // после отправки формы, очищаем инпуты
+          // setTimeout(() => {        
+          //   statusMessage.remove()    // через 2 секунды удаляем сообщение об удачной отправке
+          // }, 2000)
           console.log(request.response)
-          statusMessage.textContent = message.success;
+          showThanks(message.success);
+          statusMessage.remove()    
           form.reset()  // после отправки формы, очищаем инпуты
-          setTimeout(() => {        
-            statusMessage.remove()    // через 2 секунды удаляем сообщение об удачной отправке
-          }, 2000)
         } else {
-          statusMessage.textContent = message.failed;
+          showThanks(message.failed);
         }
       })
     })
+  }
+
+  function showThanks(message) {
+    const prevModalDialog = document.querySelector('.modal__dialog')
+    
+    prevModalDialog.classList.remove('show')
+    prevModalDialog.classList.add('hide')
+    openModal()
+
+    const thanksModal = document.createElement('div')
+    thanksModal.classList.add('modal__dialog')
+    thanksModal.innerHTML = `
+      <div class ="modal__content">
+      <div class ="modal__close" data-close>×</div>
+      <div class ="modal__title">${message}</div>
+      </div>
+    `;
+
+    document.querySelector('.modal').append(thanksModal)
+    setTimeout(() => {
+      thanksModal.remove()
+      prevModalDialog.classList.add('show')
+      prevModalDialog.classList.remove('hide')
+      closeModal()
+    },4000)
   }
 });
