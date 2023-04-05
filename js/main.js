@@ -126,25 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
     btns.addEventListener("click", openModal);
   });
 
-  // modalTriger.forEach((btns) => {
-  //   // для того чтобы работало на каждой кнопке используем перебор а потом
-  //   btns.addEventListener("click", () => {
-  //     // на аргумент(объект события) вешаем обработчик и проводим действия
-  //     modal.classList.add("show");
-  //     modal.classList.remove("hide");
-  //     document.body.style.overflow = "hidden";
-  //     // либо просто вызвать функцию, но передать ее в качестве аргумента после 'click'
-  //     // openModal()
-  //   });
-  // });
-  // вынесли повторяющийся код в функцию чтобы не повторять себя
   function closeModal() {
     modal.classList.remove("show");
     modal.classList.add("hide");
     document.body.style.overflow = "";
   }
-
-  // modalClose.addEventListener("click", closeModal); // при нажатии на крестик окно закрывается
 
   // здесь клик вешается на окно, но сам контент с текстом и формой это не окно, и если кликать по контенту то ничего закрываться не будет
   modal.addEventListener("click", (e) => {
@@ -215,6 +201,26 @@ document.addEventListener("DOMContentLoaded", () => {
       this.parent.append(elem) // DOM элемент в который мы помещаем наш элемент(карточку)
     }
   }
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // const getResources = async (url) => {
+  //   const res = await fetch(url);
+    
+  //   if(!res.ok) {
+  //     throw new Error(`Could not fetch ${url}, status: ${res.status}`)
+  //   }
+
+  //   return await res.json()
+  // }
+
+  // getResources('http://localhost:3000/menu')
+  // .then(data => {
+  //   data.forEach(({img, altimg, title, descr, price}) => {
+  //     new MenuCard(img, altimg, title, descr, price, '.menu .container').render()
+  //   })
+  // })
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  // -------------------------------------------------------------------------------------------
                     // src, alt, title, descr, price, parentSelector, ...classes
   new MenuCard(
     "img/tabs/vegy.jpg", 
@@ -242,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
     13,
     '.menu .container',
   ).render()
+  // -------------------------------------------------------------------------------------------
 
   // Forms 
 
@@ -252,11 +259,32 @@ document.addEventListener("DOMContentLoaded", () => {
     success: 'Спасибо! Скоро мы с вами свяжемся',
     failed: 'Что то пошло не так...'
   }
-
+// -------------------------------------------------------------------------------------------
   forms.forEach(i => {
     postData(i)
   })
+// -------------------------------------------------------------------------------------------
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // forms.forEach(i => {
+  //   bindPostData(i) 
+  // })
 
+  // FN настраивает наш запрос на сервер, получает ответ
+  // const postData = async (url, data) => { // асинхронный код async и await работают только в паре
+  //   const res = await fetch(url, {        // JS будет ждать выполнения результата из за await 
+  //     method: 'POST',
+  //       headers: {
+  //         'Content-type': 'application/json'
+  //       },
+  //       body: data
+  //   })
+  //   // трансформирует ответ в json. Объект мб большим и мы не знаем сколько понадобиться времени поэтому ставим await
+  //   return await res.json() 
+  // }
+  
+  
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//function bindPostData  при расскоментировании(++++++++) сменить название FN
   function postData(form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault()
@@ -268,7 +296,8 @@ document.addEventListener("DOMContentLoaded", () => {
       margin: 0 auto;
       `;
       form.insertAdjacentElement('afterend', statusMessage)
-
+      // --------------------ЧЕРЕЗ XML--------------
+  // -------------------------------------------------------------------------------------------
       const request = new XMLHttpRequest()
       request.open('POST', 'server.php')
       // когда используется связка XMLHttpRequest и FormData заголовок устанавливать не нужно, он устанавливается автоматически
@@ -303,6 +332,25 @@ document.addEventListener("DOMContentLoaded", () => {
           showThanks(message.failed);
         }
       })
+  // -------------------------------------------------------------------------------------------
+
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // const formData = new FormData(form)
+      // const json = JSON.stringify(Object.fromEntries(formData.entries()))
+      // postData('http://localhost:3000/requests', json)
+      // .then((data) => {
+      //   console.log(data)
+      //   showThanks(message.success);
+      //   statusMessage.remove()    
+      // })
+      // .catch(() => {
+      //   showThanks(message.failed);
+      // })
+      // .finally(() => {
+      //   form.reset()  // после отправки формы, очищаем инпуты
+      // })
+  // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     })
   }
 
@@ -330,4 +378,14 @@ document.addEventListener("DOMContentLoaded", () => {
       closeModal()
     },4000)
   }
+  // чтобы не было ошибки, надо запускать сервер(передаем в fetch адрес сервера) и json-server db.json(подключаем к базе данных)
+  fetch('http://localhost:3000/menu')
+    .then(data => data.json())
+    // .then(res => console.log(res))
+
+    //для того чтобы все работало нужно: скачать проект с github, скинуть все на сервер, в терминале прописать (npm i),
+    //расскоментировать блоки с (+++++++) и закоментировать блоки с (----------), 
+    //в терминале прописать команду json-server (db.json) прописать свою базу
+    //вместо (http://localhost:3000/menu, http://localhost:3000/requests) 
+    //прописать свой url
 });
