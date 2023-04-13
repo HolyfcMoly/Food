@@ -36,15 +36,15 @@ function slider() {
         ).renderSlide()
     }
 
-    const slides = document.querySelectorAll('.offer__slide')
-    const slider = document.querySelector('.offer__slider')
-    const prev = document.querySelector('.offer__slider-prev')
-    const next = document.querySelector('.offer__slider-next')
-    const total = document.querySelector('#total')
-    const current = document.querySelector('#current')
-    const wrapper = document.querySelector('.offer__slider-wrapper')
-    const field = document.querySelector('.offer__slider-inner')
-    const width = window.getComputedStyle(wrapper).width      // получаем ширину обертки
+    const slides = document.querySelectorAll(slide)
+    const slider = document.querySelector(container)
+    const prev = document.querySelector(prevArrow)
+    const next = document.querySelector(nextArrow)
+    const total = document.querySelector(totalCount)
+    const current = document.querySelector(currentCount)
+    const wrapper = document.querySelector(slideWrapper)
+    const field = document.querySelector(slideField)
+    const width = Math.floor(parseFloat(window.getComputedStyle(wrapper).width))      // получаем ширину обертки с плавающей точкой и округляем до целого
     // определяем начальный индекс слайдера
     let slideIndex = 1
     let offset = 0    // смещение слайдов
@@ -57,18 +57,8 @@ function slider() {
     // FN в которой проверяем что если индекс слайда меньше 10 то добавляем '0' к индексу слайда. иначе показываем номер тек слайда
     function currentIndx() {
         current.textContent = slideIndex < 10 ? `0${slideIndex}` : slideIndex
-        // if(slideIndex < 10) {
-        // current.textContent = `0${slideIndex}`
-        // } else {
-        //   current.textContent = slideIndex
-        // }
     }
     currentIndx()
-
-    function delDot(str) {
-        return str.replace(/\D/g, '')
-    }
-    
     // устанавливаем ширину слайдов
     field.style.width = 100 * slides.length + '%';
     field.style.display = 'flex';
@@ -115,10 +105,10 @@ function slider() {
     next.addEventListener('click', () => {
         //трансформируем строку width в number, уменьшаем на 2 символа(вырезаем px),
         // и * на количество элементов массива slides, вычтенного из 1.
-        if(offset == delDot(width) * (slides.length - 1)) {
+        if(offset == width * (slides.length - 1)) {
         offset = 0  //ставим смещение на начало слайдов
         } else { // если не послд слайд то при клике на стрелочку добавляется ширина еще одного слайда и происходит смещение
-        offset += +delDot(width)
+        offset += width
         }
         // смещение по оси Х на ...px
         field.style.transform = `translateX(-${offset}px)`
@@ -135,9 +125,9 @@ function slider() {
     prev.addEventListener('click', () => {
         // тоже самое но если слайд является 1 то мы смещаемся на последний слайд
         if(offset === 0) {
-        offset = delDot(width) * (slides.length - 1)
+        offset = width * (slides.length - 1)
         } else { // тоже самое но смещение в другую сторону
-        offset -= delDot(width)
+        offset -= width
         }
 
         field.style.transform = `translateX(-${offset}px)`
@@ -160,7 +150,7 @@ function slider() {
         // присваиваем слайд индексу значение на котором был клик
         slideIndex = slideTo
         // вычисляем смещение поля со слайдами 
-        offset = delDot(width) * (slideTo - 1)
+        offset = width * (slideTo - 1)
         // перемещаем поля со слайдами в зависимости от значения offset
         field.style.transform = `translateX(-${offset}px)`
         //вызов fn для обновления текущего слайда

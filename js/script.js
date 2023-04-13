@@ -10,11 +10,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const modalTimerId = setTimeout(() => openModal('.modal', modalTimerId), 50000)
 
-  tabs()
+  tabs(".tabheader__item", ".tabcontent", ".tabheader__items", "tabheader__item_active")
   modal("[data-modal]", ".modal", modalTimerId)
   timer()
   calc()
   cards()
   forms('form', modalTimerId)
-  slider()
+  slider({
+    container: '.offer__slider',
+    nextArrow: '.offer__slider-next',
+    prevArrow: '.offer__slider-prev',
+    totalCount: '#total',
+    currentCount: '#current',
+    slideWrapper: '.offer__slider-wrapper',
+    slideField: '.offer__slider-inner',
+    slide: '.offer__slide'
+  })
 });
